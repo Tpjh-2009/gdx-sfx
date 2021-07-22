@@ -17,7 +17,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     
-    testCompile "net.spookygames.gdx:gdx-nativefilechooser-desktop:1.0.0"
+    testCompile "games.spooky.gdx:gdx-nativefilechooser-desktop:1.0.0"
 }
 
 apply plugin: 'maven-publish'
