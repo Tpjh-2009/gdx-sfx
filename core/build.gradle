@@ -1,14 +1,14 @@
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
-    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-    testCompile "games.spooky.gdx:gdx-nativefilechooser:1.0.0"
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testImplementation "games.spooky.gdx:gdx-nativefilechooser:1.0.0"
 }
 
 apply plugin: 'maven-publish'

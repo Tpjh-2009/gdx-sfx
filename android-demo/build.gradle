@@ -27,7 +27,6 @@ dependencies {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25'
 
     defaultConfig {
         applicationId "net.spookygames.gdx.sfx"

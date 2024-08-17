@@ -1,14 +1,8 @@
 
-plugins {
-  id "com.github.dcendents.android-maven" version "1.5"
-}
-
-apply plugin: 'android-library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 8
@@ -16,8 +10,8 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     
     sourceSets {
@@ -34,12 +28,12 @@ project.archivesBaseName = "$libName-${project.name}"
 
 dependencies {
 	if(projectDir.getParentFile().equals(rootDir)) {
-    	compile project(':core')
+        implementation project(':core')
    	 } else {
-    	compile project(':'+projectDir.getParentFile().name+':core')
+        implementation project(':'+projectDir.getParentFile().name+':core')
    	 }
 
-    compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
 }
 
 task javadoc(type: Javadoc) {
@@ -79,7 +73,7 @@ eclipse {
     }
 
     classpath {
-        plusConfigurations += [ project.configurations.compile ]        
+        plusConfigurations += [ project.configurations.implementation ]
         containers 'org.eclipse.andmore.ANDROID_FRAMEWORK', 'org.eclipse.andmore.LIBRARIES'       
     }
 
@@ -107,6 +101,3 @@ task createPom {
     }
 }
 build.dependsOn createPom
-
-task publishToMavenLocal (dependsOn: install) {
-}

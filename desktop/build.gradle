@@ -1,23 +1,23 @@
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
 	if(projectDir.getParentFile().equals(rootDir)) {
-    	compile project(':core')
-   	 	testCompile project(path: ':core', configuration: 'demo')
+        implementation project(':core')
+        testImplementation project(path: ':core', configuration: 'demo')
    	 } else {
-    	compile project(':'+projectDir.getParentFile().name+':core')
-   	 	testCompile project(path: ':'+projectDir.getParentFile().name+':core', configuration: 'demo')
+        implementation project(':'+projectDir.getParentFile().name+':core')
+   	 	testImplementation project(path: ':'+projectDir.getParentFile().name+':core', configuration: 'demo')
    	 }
-    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-    
-    testCompile "games.spooky.gdx:gdx-nativefilechooser-desktop:1.0.0"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    testImplementation "games.spooky.gdx:gdx-nativefilechooser-desktop:1.0.0"
 }
 
 apply plugin: 'maven-publish'
@@ -28,7 +28,7 @@ archivesBaseName = "$libName-${project.name}"
 task demo(type: Jar) {
     baseName = "$libName-demo"
 
-    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDirs)
     from sourceSets.test.output
     from {configurations.compile.collect {zipTree(it)}}
     from {configurations.testCompile.collect {zipTree(it)}}
