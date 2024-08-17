@@ -59,6 +59,3 @@ publishing {
 
 apply from: '../license.gradle'
 license.includes(["**/*.java"])
-
-apply from: '../publish.gradle'
-bintray.publications = ['maven']

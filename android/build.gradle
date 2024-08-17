@@ -95,10 +95,6 @@ eclipse {
 apply from: '../license.gradle'
 license.excludes(["**/*.xml", "**/BuildConfig.java", "**/R.java"])
 
-apply from: '../publish.gradle'
-bintray.configurations = ['archives']
-bintrayUpload.dependsOn build
-
 task createPom {
     doLast {
     pom {
