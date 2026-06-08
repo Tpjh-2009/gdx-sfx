@@ -1,4 +1,3 @@
-
 apply plugin: 'java'
 
 java {
@@ -9,14 +8,14 @@ java {
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
-	if(projectDir.getParentFile().equals(rootDir)) {
+    if (projectDir.getParentFile().equals(rootDir)) {
         implementation project(':core')
         testImplementation project(path: ':core', configuration: 'demo')
-   	 } else {
-        implementation project(':'+projectDir.getParentFile().name+':core')
-   	 	testImplementation project(path: ':'+projectDir.getParentFile().name+':core', configuration: 'demo')
-   	 }
-    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    } else {
+        implementation project(':' + projectDir.getParentFile().name + ':core')
+        testImplementation project(path: ':' + projectDir.getParentFile().name + ':core', configuration: 'demo')
+    }
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 
     testImplementation "games.spooky.gdx:gdx-nativefilechooser-desktop:1.0.0"
@@ -24,16 +23,18 @@ dependencies {
 
 apply plugin: 'maven-publish'
 
-archivesBaseName = "$libName-${project.name}"
+base {
+    archivesName = "$libName-${project.name}"
+}
 
 // Demo
 task demo(type: Jar) {
-    baseName = "$libName-demo"
+    archiveBaseName = "$libName-demo"
 
     from files(sourceSets.main.output.classesDirs)
     from sourceSets.test.output
-    from {configurations.compile.collect {zipTree(it)}}
-    from {configurations.testCompile.collect {zipTree(it)}}
+    from { configurations.compile.collect { zipTree(it) } }
+    from { configurations.testCompile.collect { zipTree(it) } }
 
     manifest {
         attributes 'Main-Class': "net.spookygames.gdx.sfx.demo.GdxSfxDemoDesktop"
@@ -41,14 +42,14 @@ task demo(type: Jar) {
 }
 
 // Javadoc
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 // Sources
-task sourcesJar (type : Jar) {
-    classifier = 'sources'
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 

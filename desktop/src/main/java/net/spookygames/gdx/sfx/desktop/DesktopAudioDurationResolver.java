@@ -34,10 +34,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.backends.lwjgl.audio.Mp3;
-import com.badlogic.gdx.backends.lwjgl.audio.Ogg;
-import com.badlogic.gdx.backends.lwjgl.audio.OpenALSound;
-import com.badlogic.gdx.backends.lwjgl.audio.Wav;
 import com.badlogic.gdx.files.FileHandle;
 import com.jcraft.jorbis.JOrbisException;
 import com.jcraft.jorbis.VorbisFile;
@@ -54,79 +50,74 @@ public class DesktopAudioDurationResolver implements MusicDurationResolver, Soun
 
 	@Override
 	public float resolveMusicDuration(Music music, FileHandle musicFile) {
-		// TODO Change the world, make this happen
-		// return ((OpenALMusic) music).duration();
-
-		if (music instanceof Wav.Music) {
-			try {
-				return wavDuration(musicFile);
-			} catch (UnsupportedAudioFileException e) {
-				Gdx.app.error("gdx-sfx", "Unable to resolve duration of wav file " + musicFile.toString(), e);
-			} catch (IOException e) {
-				Gdx.app.error("gdx-sfx", "Unable to resolve duration of wav file " + musicFile.toString(), e);
-			}
-		} else if (music instanceof Mp3.Music) {
-			try {
-				return mp3Duration(musicFile);
-			} catch (BitstreamException e) {
-				Gdx.app.error("gdx-sfx", "Unable to resolve duration of mp3 file " + musicFile.toString(), e);
-			}
-		} else if (music instanceof Ogg.Music) {
-			try {
-				return oggDuration(musicFile);
-			} catch (JOrbisException e) {
-				Gdx.app.error("gdx-sfx", "Unable to resolve duration of ogg file " + musicFile.toString(), e);
-			}
-		}
-
-		return -1f;
-	}
-
-	private float wavDuration(FileHandle musicFile) throws UnsupportedAudioFileException, IOException {
-		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile.file());
-		AudioFormat format = audioInputStream.getFormat();
-		long frames = audioInputStream.getFrameLength();
-		float durationInSeconds = frames / format.getFrameRate();
-		return durationInSeconds;
-	}
-
-	private float mp3Duration(FileHandle musicFile) throws BitstreamException {
-		Bitstream bitstream = new Bitstream(musicFile.read());
-		int length = (int) musicFile.length();
-		int streamPos = bitstream.header_pos();
-		Header header = bitstream.readFrame();
-		if ((streamPos > 0) && (length != AudioSystem.NOT_SPECIFIED) && (streamPos < length))
-			length -= streamPos;
-		float totalMilliseconds = header.total_ms(length);
-		float durationInSeconds = totalMilliseconds / 1000f;
-		return durationInSeconds;
-	}
-
-	private float oggDuration(FileHandle musicFile) throws JOrbisException {
-		String path = null;
-		File file = musicFile.file();
-		FileHandle tmpFile = null;
-		
-		if(file.exists()) {
-			path = file.getAbsolutePath();
-		} else {
-			tmpFile = FileHandle.tempFile("gdx-sfx.ogg.");
-			musicFile.copyTo(tmpFile);
-			path = tmpFile.file().getAbsolutePath();
-		}
-		
-		VorbisFile vorbis = new VorbisFile(path);
-		float durationInSeconds =  vorbis.time_total(-1);
-		
-		if(tmpFile != null)
-			tmpFile.delete();
-		
-		return durationInSeconds;
+		return resolveFileDuration(musicFile);
 	}
 
 	@Override
 	public float resolveSoundDuration(Sound sound, FileHandle soundFile) {
-		return ((OpenALSound) sound).duration();
+		return resolveFileDuration(soundFile);
+	}
+
+	private float resolveFileDuration(FileHandle file) {
+		String ext = file.extension().toLowerCase();
+		try {
+			switch (ext) {
+				case "wav":
+					return wavDuration(file);
+				case "mp3":
+					return mp3Duration(file);
+				case "ogg":
+					return oggDuration(file);
+				default:
+					Gdx.app.error("gdx-sfx", "Unsupported audio format for duration: " + ext);
+					return -1f;
+			}
+		} catch (Exception e) {
+			Gdx.app.error("gdx-sfx", "Failed to get duration for " + file.toString(), e);
+			return -1f;
+		}
+	}
+
+	private float wavDuration(FileHandle file) throws UnsupportedAudioFileException, IOException {
+		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file.file());
+		AudioFormat format = audioInputStream.getFormat();
+		long frames = audioInputStream.getFrameLength();
+		audioInputStream.close();
+		return (float) frames / format.getFrameRate();
+	}
+
+	private float mp3Duration(FileHandle file) throws BitstreamException {
+		Bitstream bitstream = new Bitstream(file.read());
+		int length = (int) file.length();
+		int streamPos = bitstream.header_pos();
+		Header header = bitstream.readFrame();
+		if (header == null) return -1f;
+		if ((streamPos > 0) && (length != AudioSystem.NOT_SPECIFIED) && (streamPos < length))
+			length -= streamPos;
+		float totalMilliseconds = header.total_ms(length);
+		return totalMilliseconds / 1000f;
+	}
+
+	private float oggDuration(FileHandle file) throws JOrbisException {
+		String path = null;
+		File javaFile = file.file();
+		FileHandle tmpFile = null;
+
+		if (javaFile.exists()) {
+			path = javaFile.getAbsolutePath();
+		} else {
+			tmpFile = FileHandle.tempFile("gdx-sfx.ogg.");
+			file.copyTo(tmpFile);
+			path = tmpFile.file().getAbsolutePath();
+		}
+
+		VorbisFile vorbis = new VorbisFile(path);
+		float durationInSeconds = vorbis.time_total(-1);
+
+		if (tmpFile != null)
+			tmpFile.delete();
+
+		return durationInSeconds;
 	}
 
 	public static void initialize() {

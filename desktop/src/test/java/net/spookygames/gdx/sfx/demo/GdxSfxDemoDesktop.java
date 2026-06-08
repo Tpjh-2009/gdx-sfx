@@ -23,7 +23,7 @@
  */
 package net.spookygames.gdx.sfx.demo;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 
 import net.spookygames.gdx.nativefilechooser.desktop.DesktopFileChooser;
 import net.spookygames.gdx.sfx.desktop.DesktopAudioDurationResolver;

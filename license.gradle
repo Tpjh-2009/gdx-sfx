@@ -1,16 +1,12 @@
-
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-  }
-  dependencies {
-    classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
-  }
 }
-
-apply plugin: nl.javadude.gradle.plugins.license.LicensePlugin
+apply plugin: "com.github.hierynomus.license"
 
 license {
     header = file('../LICENSE')

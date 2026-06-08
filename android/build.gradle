@@ -1,103 +1,105 @@
-
-apply plugin: 'com.android.library'
-
-android {
-    compileSdkVersion 23
-
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 23
-    }
-    
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-        }
-    }
-}
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-project.archivesBaseName = "$libName-${project.name}"
-
-dependencies {
-	if(projectDir.getParentFile().equals(rootDir)) {
-        implementation project(':core')
-   	 } else {
-        implementation project(':'+projectDir.getParentFile().name+':core')
-   	 }
-
-    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../javadoc/")
-    failOnError false
-}
-
-// Javadoc
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-// Sources
-task sourcesJar (type : Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-eclipse {
-    sourceSets {
-        main {
-            java.srcDirs 'src/main/java', 'gen'
-        }
-    }
-
-    jdt {
-        sourceCompatibility = 1.6
-        targetCompatibility = 1.6
-    }
-
-    classpath {
-        plusConfigurations += [ project.configurations.implementation ]
-        containers 'org.eclipse.andmore.ANDROID_FRAMEWORK', 'org.eclipse.andmore.LIBRARIES'       
-    }
-
-    project {
-        natures 'org.eclipse.andmore.AndroidNature'
-        buildCommands.clear();
-        buildCommand "org.eclipse.andmore.PreCompilerBuilder"
-        buildCommand "org.eclipse.jdt.core.javabuilder"
-        buildCommand "org.eclipse.andmore.ApkBuilder"
-    }
-}
-
-apply from: '../license.gradle'
-license.excludes(["**/*.xml", "**/BuildConfig.java", "**/R.java"])
-
-task createPom {
-    doLast {
-    pom {
-        project {
-            packaging 'aar'
-            artifactId project.archivesBaseName
-        }
-    }
-    .writeTo("$buildDir/poms/pom-default.xml")
-    }
-}
-build.dependsOn createPom
+//
+//apply plugin: 'com.android.library'
+//
+//android {
+//    compileSdkVersion 23
+//
+//    defaultConfig {
+//        minSdkVersion 8
+//        targetSdkVersion 23
+//    }
+//
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+//
+//    sourceSets {
+//        main {
+//            manifest.srcFile 'AndroidManifest.xml'
+//        }
+//    }
+//}
+//
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//}
+//
+//project.archivesBaseName = "$libName-${project.name}"
+//
+//dependencies {
+//	if(projectDir.getParentFile().equals(rootDir)) {
+//        implementation project(':core')
+//   	 } else {
+//        implementation project(':'+projectDir.getParentFile().name+':core')
+//   	 }
+//
+//    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//}
+//
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    destinationDir = file("../javadoc/")
+//    failOnError false
+//}
+//
+//// Javadoc
+//task javadocJar (type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//
+//// Sources
+//task sourcesJar (type : Jar) {
+//    classifier = 'sources'
+//    from android.sourceSets.main.java.srcDirs
+//}
+//
+//artifacts {
+//    archives sourcesJar
+//    archives javadocJar
+//}
+//
+//eclipse {
+//    sourceSets {
+//        main {
+//            java.srcDirs 'src/main/java', 'gen'
+//        }
+//    }
+//
+//    jdt {
+//        sourceCompatibility = 1.6
+//        targetCompatibility = 1.6
+//    }
+//
+//    classpath {
+//        plusConfigurations += [ project.configurations.implementation ]
+//        containers 'org.eclipse.andmore.ANDROID_FRAMEWORK', 'org.eclipse.andmore.LIBRARIES'
+//    }
+//
+//    project {
+//        natures 'org.eclipse.andmore.AndroidNature'
+//        buildCommands.clear();
+//        buildCommand "org.eclipse.andmore.PreCompilerBuilder"
+//        buildCommand "org.eclipse.jdt.core.javabuilder"
+//        buildCommand "org.eclipse.andmore.ApkBuilder"
+//    }
+//}
+//
+//apply from: '../license.gradle'
+//license.excludes(["**/*.xml", "**/BuildConfig.java", "**/R.java"])
+//
+//task createPom {
+//    doLast {
+//    pom {
+//        project {
+//            packaging 'aar'
+//            artifactId project.archivesBaseName
+//        }
+//    }
+//    .writeTo("$buildDir/poms/pom-default.xml")
+//    }
+//}
+//build.dependsOn createPom
