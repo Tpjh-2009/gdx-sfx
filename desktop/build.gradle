@@ -28,7 +28,7 @@ base {
 }
 
 // Demo
-task demo(type: Jar) {
+tasks.register('demo', Jar) {
     archiveBaseName = "$libName-demo"
 
     from files(sourceSets.main.output.classesDirs)
@@ -42,13 +42,14 @@ task demo(type: Jar) {
 }
 
 // Javadoc
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 // Sources
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }

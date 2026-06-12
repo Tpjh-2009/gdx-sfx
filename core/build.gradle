@@ -21,7 +21,7 @@ configurations {
     demo.extendsFrom testRuntime
 }
 
-task demoJar(type: Jar) {
+tasks.register('demoJar', Jar) {
     archiveClassifier = 'demo'
     from sourceSets.test.output
 }
@@ -31,13 +31,14 @@ artifacts {
 }
 
 // Javadoc
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 // Sources
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
